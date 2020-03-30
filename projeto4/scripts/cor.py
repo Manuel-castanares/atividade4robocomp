@@ -12,7 +12,7 @@ import cv2
 import time
 from geometry_msgs.msg import Twist, Vector3, Pose
 from nav_msgs.msg import Odometry
-from sensor_msgs.msg import Image, CompressedImage
+from sensor_msgs.msg import Image, CompressedImage, LaserScan
 from cv_bridge import CvBridge, CvBridgeError
 import cormodule
 
@@ -56,6 +56,11 @@ def roda_todo_frame(imagem):
 		cv2.imshow("Camera", cv_image)
 	except CvBridgeError as e:
 		print('ex', e)
+
+def scaneou(dados):
+	global dist
+	dist = dados.ranges[90]
+	print(dist)
 	
 if __name__=="__main__":
 	rospy.init_node("cor")
@@ -85,6 +90,8 @@ if __name__=="__main__":
 	recebedor = rospy.Subscriber(topico_imagem, CompressedImage, roda_todo_frame, queue_size=4, buff_size = 2**24)
 	print("Usando ", topico_imagem)
 
+	recebe_scan = rospy.Subscriber("/scan", LaserScan, scaneou)
+
 	velocidade_saida = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
 
 	try:
@@ -95,10 +102,13 @@ if __name__=="__main__":
 				print("Média dos Azul: {0}, {1}".format(media[0], media[1]))
 				print("Centro dos Azul: {0}, {1}".format(centro[0], centro[1]))
 
-				if (media[0] > centro[0]):
-					vel = Twist(Vector3(0.3,0,0), Vector3(0,0,-0.1))
-				if (media[0] < centro[0]):
-					vel = Twist(Vector3(0,0,0), Vector3(0,0,0.1))
+				if dist < 0.5:
+					vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
+				else:
+					if (media[0] > centro[0]):
+						vel = Twist(Vector3(0.3,0,0), Vector3(0,0,-0.1))
+					if (media[0] < centro[0]):
+						vel = Twist(Vector3(0,0,0), Vector3(0,0,0.1))
 				
 
 
