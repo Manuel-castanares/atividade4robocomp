@@ -59,7 +59,7 @@ def roda_todo_frame(imagem):
 
 def scaneou(dados):
 	global dist
-	dist = dados.ranges[90]
+	dist = dados.ranges[359]
 	print(dist)
 	
 if __name__=="__main__":
@@ -99,14 +99,14 @@ if __name__=="__main__":
 		while not rospy.is_shutdown():
 			vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
 			if len(media) != 0 and len(centro) != 0:
-				print("Média dos Azul: {0}, {1}".format(media[0], media[1]))
-				print("Centro dos Azul: {0}, {1}".format(centro[0], centro[1]))
+				print("Média dos Verdes: {0}, {1}".format(media[0], media[1]))
+				print("Centro dos Verdes: {0}, {1}".format(centro[0], centro[1]))
 
-				if dist < 0.5:
+				if dist <= 0.20:
 					vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
 				else:
 					if (media[0] > centro[0]):
-						vel = Twist(Vector3(0.3,0,0), Vector3(0,0,-0.1))
+						vel = Twist(Vector3(0.2,0,0), Vector3(0,0,-0.1))
 					if (media[0] < centro[0]):
 						vel = Twist(Vector3(0,0,0), Vector3(0,0,0.1))
 				
